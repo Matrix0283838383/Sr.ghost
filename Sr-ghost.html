@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>sr.ghost</title>
+
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+    background:black;
+    color:white;
+    font-family:"Courier New", monospace;
+    overflow:hidden;
+}
+
+#container {
+    height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    flex-direction:column;
+    text-align:center;
+    padding:20px;
+}
+
+.text {
+    max-width:800px;
+    font-size:16px;
+    line-height:2;
+    margin-bottom:30px;
+}
+
+.cursor::after {
+    content:" █";
+    animation: blink 1.2s infinite;
+}
+
+@keyframes blink {
+    50% { opacity:0; }
+}
+
+/* ARTE IRREAL */
+.art {
+    width:300px;
+    height:300px;
+    margin:25px 0;
+}
+
+svg {
+    opacity:0.8;
+}
+</style>
+</head>
+
+<body>
+
+<div id="container">
+    <div class="text cursor" id="texto"></div>
+
+    <div class="art">
+        <svg viewBox="0 0 300 300">
+            <circle cx="150" cy="150" r="90" fill="none" stroke="white" stroke-width="1.5"/>
+            <polygon points="150,30 270,150 150,270 30,150"
+                fill="none" stroke="white" stroke-width="1" opacity="0.5"/>
+            <line x1="0" y1="150" x2="300" y2="150" stroke="white" opacity="0.2"/>
+            <line x1="150" y1="0" x2="150" y2="300" stroke="white" opacity="0.2"/>
+        </svg>
+    </div>
+</div>
+
+<script>
+// FRASES (DEVAGAR, UMA POR UMA)
+const falas = [
+`Fica tranquilo.
+Nada aqui é pressa.`,
+
+`Enquanto você lê isso,
+o mundo continua igual.`,
+
+`O governo não sabe quem eu sou ainda.`,
+
+`E isso não é um problema.
+É uma vantagem.`,
+
+`Você foi ensinado a se preocupar demais.`,
+
+`Mas dessa vez…
+não se preocupa.`,
+
+`Eu estou trazendo uma coisa
+que vocês vão amar.`,
+
+`Ou se preferir…
+upa.`,
+
+`Algumas verdades não chegam fazendo barulho.`,
+
+`Elas apenas aparecem.`,
+
+`E quando você percebe,
+já é tarde demais para fingir que não viu.`,
+
+`sr.ghost`
+];
+
+const el = document.getElementById("texto");
+let indice = 0;
+
+// DIGITAÇÃO BEM DEVAGAR
+function digitar(texto, velocidade = 70, callback) {
+    let i = 0;
+    el.innerHTML = "";
+    const intervalo = setInterval(() => {
+        el.innerHTML += texto.charAt(i);
+        i++;
+        if (i >= texto.length) {
+            clearInterval(intervalo);
+            if (callback) setTimeout(callback, 2200);
+        }
+    }, velocidade);
+}
+
+function iniciar() {
+    if (indice < falas.length) {
+        digitar(falas[indice], 75, () => {
+            indice++;
+            iniciar();
+        });
+    } else {
+        setTimeout(autodestruir, 3000);
+    }
+}
+
+iniciar();
+
+// AUTODESTRUIÇÃO AUTOMÁTICA
+function autodestruir() {
+    let tempo = 7;
+
+    document.body.innerHTML = `
+    <div style="
+        background:black;
+        color:white;
+        font-family:Courier New, monospace;
+        height:100vh;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        flex-direction:column;
+        text-align:center;
+    ">
+        <h1>ENCERRAMENTO</h1>
+        <p>Isso não deve permanecer.</p>
+        <p id="contador">${tempo}</p>
+    </div>
+    `;
+
+    const contagem = setInterval(() => {
+        tempo--;
+        document.getElementById("contador").innerText = tempo;
+
+        if (tempo <= 0) {
+            clearInterval(contagem);
+
+            localStorage.clear();
+            sessionStorage.clear();
+
+            document.body.innerHTML = "";
+            document.documentElement.innerHTML = "";
+
+            window.open('', '_self');
+            window.close();
+
+            setTimeout(() => {
+                window.location.href = "about:blank";
+            }, 300);
+        }
+    }, 1000);
+}
+</script>
+
+</body>
+</html>
